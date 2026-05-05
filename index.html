@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bài tập dịch Việt sang Anh</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #222;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 28px;
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      margin-top: 0;
+      text-align: center;
+      color: #1f2937;
+    }
+
+    .note {
+      background: #eef6ff;
+      border-left: 5px solid #2563eb;
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-bottom: 22px;
+      font-size: 15px;
+    }
+
+    .student-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .question {
+      margin-bottom: 22px;
+      padding: 18px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      background: #fafafa;
+    }
+
+    .question-number {
+      font-weight: bold;
+      color: #2563eb;
+      margin-bottom: 6px;
+    }
+
+    .vietnamese-sentence {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 28px;
+    }
+
+    button {
+      border: none;
+      padding: 13px 22px;
+      border-radius: 9px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .submit-btn {
+      background: #2563eb;
+      color: white;
+    }
+
+    .submit-btn:hover {
+      background: #1d4ed8;
+    }
+
+    .reset-btn {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .reset-btn:hover {
+      background: #d1d5db;
+    }
+
+    .status {
+      text-align: center;
+      margin-top: 18px;
+      font-weight: bold;
+    }
+
+    .success {
+      color: #15803d;
+    }
+
+    .error {
+      color: #dc2626;
+    }
+
+    @media (max-width: 700px) {
+      .container {
+        margin: 12px;
+        padding: 18px;
+      }
+
+      .student-info {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Bài tập dịch Việt sang Anh</h1>
+
+    <div class="note">
+      Hãy tự dịch các câu dưới đây sang tiếng Anh. Không được copy/paste. Sau khi làm xong, bấm <b>Nộp bài</b> để gửi kết quả cho giáo viên.
+    </div>
+
+    <form id="translationForm">
+      <div class="student-info">
+        <div>
+          <label for="studentName">Họ và tên</label>
+          <input id="studentName" name="studentName" type="text" placeholder="Ví dụ: Nguyễn Văn A" required />
+        </div>
+
+        <div>
+          <label for="studentClass">Lớp / Nhóm</label>
+          <input id="studentClass" name="studentClass" type="text" placeholder="Ví dụ: Lớp tiếng Anh cơ bản" required />
+        </div>
+      </div>
+
+      <div id="questionList"></div>
+
+      <div class="actions">
+        <button class="submit-btn" type="submit">Nộp bài</button>
+        <button class="reset-btn" type="reset">Làm lại</button>
+      </div>
+
+      <div id="status" class="status"></div>
+    </form>
+  </div>
+
+  <script>
+    // BƯỚC QUAN TRỌNG:
+    // Dán link Web App Google Apps Script của bạn vào đây.
+    // Ví dụ: const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxxxx/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxkEfKl30MA_7c6LmzNrJX7a9Sp_HpkxgCFmq98J7LDacQOUk8I0QdKoEXw2K1hUVP0UA/exec";
+
+    const questions = [
+      "Tôi thường chạy mỗi ngày.",
+      "Anh ấy không bao giờ đi học muộn.",
+      "Tôi sẽ không bỏ cuộc.",
+      "Cô ấy luôn luôn học tiếng Anh vào buổi tối.",
+      "Chúng tôi thỉnh thoảng đi xem phim vào cuối tuần.",
+      "Bạn có thể giúp tôi sửa máy tính không?",
+      "Tôi không thể đến lớp hôm nay.",
+      "Anh ấy nên ngủ sớm hơn.",
+      "Cô ấy không nên ăn quá nhiều đồ ngọt.",
+      "Họ phải hoàn thành bài tập trước 9 giờ tối.",
+      "Tôi không phải làm việc vào Chủ nhật.",
+      "Bạn có phải mặc đồng phục khi đi học không?",
+      "Tôi đã mua một chiếc điện thoại mới hôm qua.",
+      "Anh ấy đã không trả lời tin nhắn của tôi.",
+      "Cô ấy đã đi Đà Lạt với gia đình tuần trước.",
+      "Bạn đã từng học tiếng Anh ở trung tâm chưa?",
+      "Tôi đang học tiếng Anh ngay bây giờ.",
+      "Mẹ tôi đang nấu ăn trong bếp.",
+      "Họ đang chơi bóng đá ở sân trường.",
+      "Trời đang mưa rất to.",
+      "Tôi sẽ gọi cho bạn sau.",
+      "Chúng tôi sẽ đi du lịch vào tháng sau.",
+      "Cô ấy sẽ không tham gia buổi họp ngày mai.",
+      "Bạn sẽ làm gì vào tối nay?",
+      "Tôi thích uống cà phê vào buổi sáng.",
+      "Anh ấy không thích ăn rau.",
+      "Cô ấy muốn trở thành một bác sĩ.",
+      "Tôi cần cải thiện kỹ năng nghe của mình.",
+      "Bộ phim này hay hơn bộ phim kia.",
+      "Đây là bài tập khó nhất trong cuốn sách."
+    ];
+
+    const questionList = document.getElementById("questionList");
+
+    questions.forEach((question, index) => {
+      const questionBox = document.createElement("div");
+      questionBox.className = "question";
+
+      questionBox.innerHTML = `
+        <div class="question-number">Câu ${index + 1}</div>
+        <div class="vietnamese-sentence">${question}</div>
+        <textarea
+          name="answer${index + 1}"
+          placeholder="Nhập bản dịch tiếng Anh của bạn..."
+          required
+          onpaste="return false"
+        ></textarea>
+      `;
+
+      questionList.appendChild(questionBox);
+    });
+
+    // Chặn copy/paste/cut/chuột phải ở mức cơ bản
+    document.addEventListener("paste", function (e) {
+      e.preventDefault();
+      alert("Không được paste. Hãy tự gõ câu trả lời.");
+    });
+
+    document.addEventListener("copy", function (e) {
+      e.preventDefault();
+    });
+
+    document.addEventListener("cut", function (e) {
+      e.preventDefault();
+    });
+
+    document.addEventListener("contextmenu", function (e) {
+      e.preventDefault();
+    });
+
+    document.addEventListener("keydown", function (e) {
+      const key = e.key.toLowerCase();
+      if ((e.ctrlKey || e.metaKey) && ["c", "v", "x", "a"].includes(key)) {
+        e.preventDefault();
+        alert("Chức năng copy/paste/select all đã bị tắt trong bài làm.");
+      }
+    });
+
+    const form = document.getElementById("translationForm");
+    const statusBox = document.getElementById("status");
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      if (SCRIPT_URL === "PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
+        statusBox.textContent = "Bạn chưa dán link Google Apps Script vào biến SCRIPT_URL.";
+        statusBox.className = "status error";
+        return;
+      }
+
+      const submitButton = document.querySelector(".submit-btn");
+      submitButton.disabled = true;
+      submitButton.textContent = "Đang nộp bài...";
+      statusBox.textContent = "";
+
+      const formData = new FormData(form);
+      const answers = {};
+
+      questions.forEach((question, index) => {
+        answers[`Câu ${index + 1}`] = {
+          question: question,
+          answer: formData.get(`answer${index + 1}`)
+        };
+      });
+
+      const payload = {
+        submittedAt: new Date().toLocaleString("vi-VN"),
+        studentName: formData.get("studentName"),
+        studentClass: formData.get("studentClass"),
+        answers: answers
+      };
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        statusBox.textContent = "Nộp bài thành công. Giáo viên đã nhận được bài làm.";
+        statusBox.className = "status success";
+        form.reset();
+      } catch (error) {
+        statusBox.textContent = "Có lỗi khi nộp bài. Vui lòng thử lại.";
+        statusBox.className = "status error";
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = "Nộp bài";
+      }
+    });
+  </script>
+</body>
+</html>
+
